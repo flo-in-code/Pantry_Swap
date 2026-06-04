@@ -1,8 +1,16 @@
 @import "tailwindcss";
+/* This file is the design system. It is where all of the custom styling lives. This file, tailwind.css, is what is written. tailwind.css uses special Tailwind syntax that browsers don't understand natively 
+main.css is the compiled output that the browser reads. Tailwind.css is the file we actually write our customizations in.*/
+/* main.css doesn't exist until the compiler creates it. Every single line in that file was written by the Tailwind compiler — some based on your tailwind.css, some added automatically as part of how Tailwind sets itself up. */
 
 /* ===================================================================== */
 /* COLORS */
 /* ===================================================================== */
+/* @theme - custom design tokens - these define the variables. 
+Once defined here, Tailwind makes them available as utility classes everywhere so bg-orange, text-orange, border-orange all work automatically
+it's like adding a custom tailwind styling class you can use.
+The pre-fix is how a css variable is declared.
+Then anywhere you want to use it, you wrap it in var().  background-color: var(--color-orange) */
 @theme {
   --font-sans: "Outfit", sans-serif;
 
@@ -23,6 +31,15 @@
 /* ===================================================================== */
 /* COLOR COMBOS */
 /* ===================================================================== */
+/* These are the custom utility classes.
+Instead of typing 5+ Tailwind classes everytime you want a card, you just write class="card" */
+
+/* CSS loads styles in order, and sometimes rules conflict. @layer lets you organize styles into named buckets with a defined priority */
+/* @layer theme, base, utilities are special — Tailwind uses them internally and expects them. */
+/* Higher priority layers win when there's a conflict. So a utility class like w-1/2 will always override a component style — intentional and predictable. */
+/* Here in this file, utilities has the highest priority (written latest) and theme has the lowest priority (written earliest)*/
+/* @layer components is not a Tailwind built-in. It's a convention Tailwind recommends, but you could technically name it anything */
+/* @apply lets you paste Tailwind utility classes inside your own CSS rule. It's shorthand so you don't have to write raw CSS values manually */
 @layer components {
   .box-color-0 {
     @apply bg-orange text-white;
@@ -52,6 +69,7 @@
 /* ===================================================================== */
 /* HEADERS + TEXT */
 /* ===================================================================== */
+/* These override default HTML element styles */
 @layer base {
   h1 {
     @apply text-[32px] font-bold;
@@ -86,12 +104,34 @@
     @apply w-full rounded-xl border border-light-brown bg-white px-4 py-3 text-sm text-black outline-none transition;
   }
 
+/* Pseudo-class : — a state or condition */
+/* These are CSS state selectors — they apply styles only when something specific is happening to the element! */
+/* :focus — when the user clicks into a field */
+/* The : prefix means "when this element is in this state". So this says: when a user clicks into an input, give it:
+border-orange — the border turns orange
+ring-2 — adds a glow ring around it
+ring-orange/30 — that ring is orange at 30% opacity (subtle glow) 
+*/
+/*  */
   input:focus,
   textarea:focus,
   select:focus {
     @apply border-orange ring-2 ring-orange/30;
   }
 
+
+/* Pseudo-element :: — a part of an element */
+/* The :: (double colon) means it's a pseudo-element — 
+it targets a specific part of the element rather than a state. 
+Placeholder text is the greyed out hint like "Enter your email..." — 
+this makes it your brand's medium grey color. */
+/* A pseudo-element answers the question: "which specific piece or generated part of the element am I targeting?"
+cssinput::placeholder - the hint text inside an empty input
+p::first-line - just the first line of a paragraph
+p::first-letter - just the first letter
+li::before - a generated piece inserted before the element
+li::after - a generated piece inserted after the element */ 
+*/
   input::placeholder,
   textarea::placeholder {
     @apply text-medium-grey;
@@ -117,9 +157,33 @@
   .circle-checkbox-dot {
     @apply size-4 rounded-full bg-orange hidden;
   }
+
+  /* This uses the + selector which means "the element immediately after". So this reads:
+"When a input inside .checkbox-item is :checked, target the .circle-checkbox that comes directly after it — and make it orange." */
   .checkbox-item input:checked + .circle-checkbox {
     @apply bg-orange;
   }
+
+  /* Native browser checkboxes <input type="checkbox"> look different on every browser and are very hard to style. So a common pattern is to:
+
+Hide the real checkbox (it still works, just invisible)
+Show a custom designed element instead
+Use :checked + to detect when the real checkbox is checked and update the visual
+ */
+
+/* 💡 The + selector is new here — called an Adjacent Sibling Selector
+cssA + B  /* targets B, but only when it immediately follows A
+
+Your HTML structure would look something like:
+
+html<div class="checkbox-item">
+  <input type="checkbox">        <!-- real checkbox, hidden -->
+  <div class="circle-checkbox">  <!-- the + targets this -->
+    <div class="circle-checkbox-dot"></div>
+  </div>
+</div>
+
+When the hidden input gets checked, the + selector reaches over and styles the visible circle next to it. Really clever pattern! */
   .checkbox-item input:checked + .circle-checkbox .circle-checkbox-dot {
     @apply block;
   }
