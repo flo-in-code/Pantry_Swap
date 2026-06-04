@@ -3,6 +3,8 @@
 main.css is the compiled output that the browser reads. Tailwind.css is the file we actually write our customizations in.*/
 /* main.css doesn't exist until the compiler creates it. Every single line in that file was written by the Tailwind compiler — some based on your tailwind.css, some added automatically as part of how Tailwind sets itself up. */
 
+/* to run tailwinds.css use - npm run dev:css
+It's a shortcut command defined in your package.json that runs the Tailwind compiler */
 
 /* Notes about main.css */
 /* When the Tailwind compiler runs, it generates main.css from scratch. 
