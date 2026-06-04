@@ -3,6 +3,13 @@
 main.css is the compiled output that the browser reads. Tailwind.css is the file we actually write our customizations in.*/
 /* main.css doesn't exist until the compiler creates it. Every single line in that file was written by the Tailwind compiler — some based on your tailwind.css, some added automatically as part of how Tailwind sets itself up. */
 
+
+/* Notes about main.css */
+/* When the Tailwind compiler runs, it generates main.css from scratch. 
+It writes the entire file itself. You never touch main.css — the compiler creates it fresh every time.
+Similarly — you wrote your custom styles in tailwind.css, and the compiler generated the full main.css with all the boilerplate included automatically.
+main.css doesn't exist until the compiler creates it. Every single line in that file was written by the Tailwind compiler — some based on your tailwind.css, some added automatically as part of how Tailwind sets itself up. */
+/* :root means they're available globally across the entire page. Tailwind then reads these variables internally to power all your utility classes like bg-orange, text-orange, etc. */
 /* ===================================================================== */
 /* COLORS */
 /* ===================================================================== */
