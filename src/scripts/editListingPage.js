@@ -328,7 +328,7 @@ document.getElementById("cancelButton").addEventListener("click", () => {
 
 
 async function getCoordsFromAddress(userAddress){
-  const apiKey = `a55530eef54342eea72f8d09fc6f365a`
+  const apiKey = process.env.GEO_API_KEY
   const url =
       `https://api.geoapify.com/v1/geocode/search` +
       `?text=${encodeURIComponent(userAddress)}` +
