@@ -385,28 +385,55 @@ document.getElementById("cancelButton").addEventListener("click", () => {
 //=============================================================================================
 // This function converts a File object to a Base64-encoded data URL for storage and preview
 //=============================================================================================
+// This function returns a Promise — meaning it's asynchronous work. Since reading a file takes time, we can't get the result instantly. The Promise will either resolve (success) or reject (error) when it's done.
 function readImageAsBase64(file) {
     return new Promise((resolve, reject) => {
+        //A safety check. If no file was passed in, bail out early so nothing crashes.
         if (!file) {
             return;
         }
+        // FileReader is a built-in browser API specifically designed to read the contents of files that a user selects. Think of it like opening a file on your computer — but the browser is doing it for you.
         const reader = new FileReader();
+
+        //onload is an event handler that fires when the file has finished being read. e.target.result contains the file's content — in this case, a Base64 string (a text representation of binary data, like data:image/png;base64,iVBOR...). When we get it, we resolve the Promise with it.
+        //  .onload is not exclusive to FileReader, but it is a pattern specific to certain browser APIs.
+        // e is the event object automatically passed in when onload fires // When onload fires, the browser automatically creates an event object of the FileReader instance and passes it in.
+        // e.target is the FileReader instance itself (reader)
+        // e.target.result is where FileReader stores the finished result — the Base64 string
+        // or can be written like ... 
+        // reader.onload = function() {
+        //  resolve(reader.result)  // no `e` needed at all
+        // }
+        // these event listeners work just like .addeventlistener()
+        // reader.addEventListener("load", function(e) {
+        //    resolve(e.target.result);
+        // })
+        // event listeners aren't exclusive to the DOM, they can be used for anything that comes from a built-in interface called EventTarget.  FileReader isn't in the DOM, but it's still an EventTarget — meaning the browser gave it the ability to fire and listen to events.
         reader.onload = function (e) {
             resolve(e.target.result); // full Base64 string
         };
+
+        //If something goes wrong while reading, onerror fires and we reject the Promise with an error message.
         reader.onerror = function () {
             reject(new Error("Error reading image"));
         };
+
+        //This kicks off the actual reading. readAsDataURL tells the FileReader to read the file and encode it as a Base64 data URL. Without this line, nothing would happen!
         reader.readAsDataURL(file);
     });
 }
 
 let currentImg;
 // upload image button
+//Grab the "Upload Photo" button from the DOM and listen for clicks.
 const uploadImgBtn = document.getElementById("uploadImgBtn");
 uploadImgBtn.addEventListener("click", async () => {
+
+    // listingImageUpload is the hidden <input type="file"> in your HTML. .files is an array of selected files — .files[0] gets the first (and only) one the user picked.
     const listingImg = document.getElementById("listingImageUpload").files[0];
-    const encodedImg = await readImageAsBase64(listingImg);
+    // Calls the helper function and waits for it to finish. Once done, encodedImg holds the full Base64 string of the image.
+    const encodedImg = await readImageAsBase64(listingImg); // returns a promise, await unwraps the promise which reveals the image as a base64 string
+    // Saves the Base64 string into currentImg (so it can be sent to the server later on form submit), and immediately previews the image on the page by setting the <img> tag's src to the Base64 string. Browsers can render Base64 images directly — pretty cool!
     currentImg = encodedImg;
     document.getElementById("listingImg").src = currentImg;
 });
