@@ -11,7 +11,7 @@
     "ejs": "^5.0.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "mongoose": "^9.6.1",
+    "mongoose": "9.9.5",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.7",
     "nodemon": "^3.1.14",
@@ -24,23 +24,38 @@
   "description": "Team Name: DTC-01\r Team Members: \r - Rayne Choy\r - Alex Harris\r - Flora Feng\r - Saba Zakeri Far\r - Oliver Wright\r ## Project Summary\r Our team wants to approach the issues of food waste and insecurity with an app that allows users to list surplus food for other users to purchase at a discounted price, allowing those who would otherwise have food going to waste to take initiative to prevent it and those who have trouble affording food to have alternate sources for acquiring groceries.",
   "main": "server.js",
   "devDependencies": {
-    "@tailwindcss/cli": "^4.2.4"
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/cli": "^4.2.4",
+    "jest": "^30.5.2",
+    "mongodb-memory-server": "^11.3.0",
+    "supertest": "^7.3.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand --forceExit",
+    "test:e2e": "playwright test",
     "start": "node server.js",
     "dev:css": "npx @tailwindcss/cli -i ./styles/tailwind.css -o ./public/main.css --watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SABZAK96/2800-202610-DTC01.git"
+    "url": "git+https://github.com/flo-in-code/Pantry_Swap.git"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "<rootDir>/tests/api/**/*.test.js"
+    ],
+    "setupFiles": [
+      "<rootDir>/tests/api/testEnv.js"
+    ],
+    "testTimeout": 30000
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/SABZAK96/2800-202610-DTC01/issues"
+    "url": "https://github.com/flo-in-code/Pantry_Swap/issues"
   },
-  "homepage": "https://github.com/SABZAK96/2800-202610-DTC01#readme"
+  "homepage": "https://github.com/flo-in-code/Pantry_Swap#readme"
 }
