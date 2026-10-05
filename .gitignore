@@ -3,3 +3,5 @@ sessions/
 node_modules/
 public/main.css
 test.html
+playwright-report/
+test-results/

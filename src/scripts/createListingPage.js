@@ -411,39 +411,6 @@ uploadImgBtn.addEventListener("click", async () => {
     document.getElementById("listingImg").src = currentImg;
 });
 
-//=======================================================================================
-// This function gets latitude and longitude coordinates from an address using geoapify
-//=======================================================================================
-async function getCoordsFromAddress(userAddress){
-  const apiKey = process.env.GEO_API_KEY
-  const url =
-      `https://api.geoapify.com/v1/geocode/search` +
-      `?text=${encodeURIComponent(userAddress)}` +
-      `&filter=countrycode:ca` +
-      `&apiKey=${encodeURIComponent(apiKey)}`;
-  const response = await fetch(url)
-  const data = await response.json()
-  if (data.error) {
-      throw new Error(
-        `Geocoding failed: ${data.statusCode || ""} ${data.error} - ${data.message || ""}`,
-      );
-    }
-
-    if (!data.features || !data.features.length) {
-      throw new Error(
-        `Geocoding failed: no results found for "${fullAddress}"`,
-      );
-    }
-  const result = data.features[0];
-  const lat = result.properties.lat;
-  const lng = result.properties.lon;
-  const newObj = {
-    lat: lat,
-    lng: lng,
-  }
-  return newObj
-}
-
 //create button
 document.querySelector("form").addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -459,10 +426,6 @@ document.querySelector("form").addEventListener("submit", async (event) => {
     const updatedBakedGoods = document.getElementById("editBakedGoods").checked;
     const updatedCookedMeals = document.getElementById("editCookedMeals").checked;
     const updatedImage = currentImg;
-
-  const addressData = await getCoordsFromAddress(updatedLocation)
-  const updatedLat = addressData.lat
-  const updatedLng = addressData.lng
 
   // //validate required fields not left blank
   if (foodArray.length == 0) {
@@ -490,8 +453,6 @@ document.querySelector("form").addEventListener("submit", async (event) => {
       category: updatedCategory,
       foods: foodArray,
       image: updatedImage,
-      lat: updatedLat,
-      lng: updatedLng,
     }),
   });
   if (response.ok) {

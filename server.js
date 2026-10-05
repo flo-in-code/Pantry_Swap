@@ -83,8 +83,6 @@ const ListingsSchema = new mongoose.Schema({
   title: String,
   price: Number,
   location: String,
-  lat: Number,
-  lng: Number,
   contact: String,
   description: String,
   category: {
@@ -145,7 +143,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.set("view engine", "ejs");
 
-main().catch((err) => console.log(err));
+if (require.main === module) {
+  main().catch((err) => console.log(err));
+}
+module.exports = app;
 
 async function main() {
   mongoose
@@ -435,8 +436,6 @@ app.put("/EditListing/:listingID", async (req, res) => {
     updatedDescription,
     updatedCategory,
     updatedFoods,
-    updatedLat,
-    updatedLng,
   } = req.body;
   try {
     const listingRecord = await ListingModel.findOne({ _id: listingID });
@@ -450,8 +449,6 @@ app.put("/EditListing/:listingID", async (req, res) => {
     if (updatedCategory) listingRecord.category = updatedCategory;
     if (updatedFoods) listingRecord.foods = updatedFoods;
     if (updatedImage) listingRecord.image = updatedImage;
-    if (updatedLat) listingRecord.lat = updatedLat;
-    if (updatedLng) listingRecord.lng = updateLng;
 
     await listingRecord.save();
     res.sendStatus(200);
@@ -514,8 +511,6 @@ app.post("/CreateListing", async (req, res) => {
     description,
     category,
     foods,
-    lat,
-    lng,
   } = req.body;
   try {
     const newListing = await ListingModel.create({
@@ -528,8 +523,6 @@ app.post("/CreateListing", async (req, res) => {
       description: description,
       category: category,
       foods: foods,
-      lat: lat,
-      lng: lng,
     });
 
     await UserModel.findByIdAndUpdate(

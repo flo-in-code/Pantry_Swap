@@ -1,0 +1,44 @@
+name: Tests # label for github actions tab
+
+on: # when to run: push to main, and on every pull request
+  push:
+    branches: [main]
+  pull_request:
+
+jobs: #job is a group of steps running parallel
+  api-tests: #Jest tests
+    runs-on: ubuntu-latest #github-hosted linux machine - thrown away when job ends
+    steps: #steps in order
+      - uses: actions/checkout@v4 # download repo code onto machine
+      - uses: actions/setup-node@v4 #install node.js
+        with:
+          node-version: 22
+          cache: npm 
+      - run: npm ci # install package-lock.json
+      - run: npm test # run latest Jest tests
+
+  e2e-tests: #playwright tests
+    runs-on: ubuntu-latest
+    services: #start mongo alongside job
+      mongo:
+        image: mongo:7  #run in container
+        ports:
+          - 27017:27017  #connect port 27017 on the machine to port 27017 in the container
+    env:
+      E2E_MONGO_URI: mongodb://127.0.0.1:27017/pantryswap_test # use the mongo container
+    steps: # 
+      - uses: actions/checkout@v4 # download repo code
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci  # install project's packages
+      - run: npx playwright install --with-deps chromium #download chromium browser, plus the Linux libraries it needs
+      - run: npm run test:e2e # playright runs app and starts tests
+      - uses: actions/upload-artifact@v4 # save files from job
+        if: ${{ !cancelled() }}  
+        # if the run is not cancelled, run actions/upload-artifact@v4 anyway
+        with:
+          name: playwright-report # name of download
+          path: playwright-report/
+          retention-days: 7
